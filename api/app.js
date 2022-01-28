@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 
 app.post('/sendsms', (req, res) => {
     client.messages.create({
-        messagingServiceSid: 'MG8a32f59531308c108ff4e5402a3d50c8',
+        messagingServiceSid: process.env.MESSAGINGSERVICESID,
         body: req.body.msg,
         to: req.body.phone
     })
