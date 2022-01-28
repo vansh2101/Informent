@@ -2,8 +2,8 @@ const express = require('express')
 const cors = require('cors')
 
 //twilio
-const accountSid = 'AC2f77ef69736e18cb2f8a8ff214eda7c2';
-const authToken = 'cc972540f722e590a270bfaee2c41bb0';
+const accountSid = process.env.ACCOUNTSID;
+const authToken = process.env.AUTHTOKEN;
 
 const client = require('twilio')(accountSid, authToken);
 
@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 
 app.post('/sendsms', (req, res) => {
     client.messages.create({
-        messagingServiceSid: 'MG8a32f59531308c108ff4e5402a3d50c8',
+        messagingServiceSid: process.env.MESSAGINGSERVICESID,
         body: req.body.msg,
         to: req.body.phone
     })
