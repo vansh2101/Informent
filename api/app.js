@@ -3,7 +3,7 @@ const cors = require('cors')
 
 //twilio
 const accountSid = 'AC2f77ef69736e18cb2f8a8ff214eda7c2';
-const authToken = 'cc972540f722e590a270bfaee2c41bb0';
+const authToken = 'e5e6b81357965807242b675631974714';
 
 const client = require('twilio')(accountSid, authToken);
 
