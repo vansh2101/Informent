@@ -4,8 +4,8 @@ const cors = require('cors')
 require('dotenv').config()
 
 //twilio
-const accountSid = process.env.ACCOUNTSID;
-const authToken = process.env.AUTHTOKEN;
+const accountSid = 'AC2f77ef69736e18cb2f8a8ff214eda7c2';
+const authToken = 'e5e6b81357965807242b675631974714';
 
 const client = require('twilio')(accountSid, authToken);
 
@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 
 app.post('/sendsms', (req, res) => {
     client.messages.create({
-        messagingServiceSid: process.env.MESSAGINGSERVICESID,
+        messagingServiceSid: 'MG8a32f59531308c108ff4e5402a3d50c8',
         body: req.body.msg,
         to: req.body.phone
     })
