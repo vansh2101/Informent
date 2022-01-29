@@ -75,7 +75,12 @@ function EventDetails({route, navigation}) {
           await db.collection('users').doc(user.email).update({credit: user.credit + give})
       })
 
-      navigation.navigate('success', {screen: 'events', text: 'Event ended. The credits would be given to the volunteers shortly.'})
+      navigation.navigate('success', {
+          screen: 'events', 
+          text: 'Event ended. The credits would be given to the volunteers shortly.',
+          sms: `${item.name} has been ended. Hope you had fun in this event.`,
+          user: user
+        })
   }
 
   return(
