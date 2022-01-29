@@ -32,6 +32,7 @@ function Articles({navigation}) {
 
         const obj = await db.collection('articles').get()
         setArticles([])
+        setShow([])
 
         obj.forEach(doc => {
           setArticles(current => {

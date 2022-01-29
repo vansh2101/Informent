@@ -1,13 +1,38 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {StyleSheet, View, Text, ScrollView, StatusBar, Pressable} from 'react-native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+import {Video} from 'expo-av';
+
+//firebase
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+import 'firebase/compat/storage'
 
 
 function ArticleDetails({route, navigation}) {
   const {article} = route.params
 
   const [step, setStep] = useState(1)
+  const [media, setMedia] = useState(null)
+
+  const video = useRef(null)
+  const [status, setStatus] = useState({})
+  const [vc, setVc] = useState(0)
+
+
+  useEffect(() => {
+      (
+          async() => {
+            if(article.video){
+                const url = await firebase.storage().ref().child('articles/'+article.name).getDownloadURL()
+
+                setMedia(url)
+            }
+          }
+      )()
+  }, [])
 
   return(
       <View style={{flex: 1}}>
@@ -17,6 +42,19 @@ function ArticleDetails({route, navigation}) {
                 <Ionicons name="chevron-back-circle" size={hp('6.5%')} color="#94c037" style={styles.backBtn} onPress={() => navigation.goBack()} />
                 <Text style={styles.h1}>{article.name}</Text>
             </View>
+
+            {media ?
+            <Video
+                ref={video}
+                style={styles.video}
+                source={{
+                uri: media,
+                }}
+                useNativeControls
+                resizeMode="contain"
+                onPlaybackStatusUpdate={status => setStatus(() => status)}
+            />
+            : <></>}
 
             <Text style={{...styles.h1, ...styles.step}}>Step {step}</Text>
 
@@ -82,7 +120,14 @@ const styles = StyleSheet.create({
 
     backBtn: {
         marginLeft: wp('3%')
-    }
+    },
+
+    video: {
+        alignSelf: 'center',
+        width: 350,
+        height: 250,
+        marginTop: hp('3%')
+    },
 })
 
 export default ArticleDetails;

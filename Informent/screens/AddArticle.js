@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, StatusBar, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, StatusBar, ScrollView, TouchableOpacity, Image, View } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,6 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
+import 'firebase/compat/storage'
 
 //components
 import Btn from '../components/Btn';
@@ -23,8 +24,8 @@ function AddArticle({route, navigation}) {
 
     const [steps, setSteps] = useState([null])
     const [details, setDetails] = useState([])
-
-    const [image, setImage] = useState();
+    const [video, setVideo] = useState('')
+    const [loading, setLoading] = useState(false)
 
     const step_details = (val, pos) => {
       const arr = details
@@ -40,40 +41,53 @@ function AddArticle({route, navigation}) {
     }
 
     const submit = async () => {
+      setLoading(true)
       const db = firebase.firestore()
 
       const arr = details.filter(item => item !== undefined)
 
-      
+      await upload(video).then(() => console.log('video uploaded'))
+
       db.collection('articles').doc().set({
         author: user.name,
         email: user.email,
         name: title,
         description: description,
-        steps: arr
+        steps: arr,
+        video: video === '' ? false: true
       })
 
       navigation.goBack()
-      
+      setLoading(false)
     }
 
-    const pickImage = async () => {
+    const pickVideo = async () => {
       let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All
+        mediaTypes: ImagePicker.MediaTypeOptions.Videos
       });
   
       if (!result.cancelled) {
-        setImage(result.uri);
-        upload(result.uri).then(() => console.log('success')).catch(err => console.log(err))
+        setVideo(result.uri);
       }
     }
 
     const upload = async (uri) => {
-      const response = await fetch(uri)
-      const blob = await response.blob()
+      if (uri !== undefined){
+        const response = await fetch(uri)
+        const blob = await response.blob()
 
-      var ref = firebase.storage().ref().child('images/test-image')
-      return ref.put(blob)
+        var ref = firebase.storage().ref().child('articles/'+title)
+        return ref.put(blob)
+      }
+    }
+
+    if(loading){
+      return(
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Image source={require('../assets/images/loading.gif')} style={{aspectRatio: 1, height: hp('20%')}} />
+          <Text style={{fontFamily: 'nunito'}}>Publishing Article</Text>
+        </View>
+      )
     }
 
     return(
@@ -87,6 +101,8 @@ function AddArticle({route, navigation}) {
 
           <InputBox label='DESCRIPTION' placeholder='Summary of the article...' onChangeText={setDescription} multiline={true} style={{height: hp('13%')}} />
 
+          <InputBox label='VIDEO' placeholder='Click to add a demo video' editable={false} onPress={() => pickVideo()} value={video} />
+
           {steps.map((item, key) => 
             <InputBox label={'STEP' + String(key+1)} placeholder='Step Details...' onChangeText={val => step_details(val,key)} multiline={true} style={{height: hp('18%')}} key={key} />
           )}
@@ -96,8 +112,6 @@ function AddArticle({route, navigation}) {
           </TouchableOpacity>
 
           <Btn text='Add Article' style={{marginTop: hp('5%')}} onPress={submit} />
-
-          <Btn text='Image' style={{marginTop: hp('5%')}} onPress={pickImage} />
 
       </ScrollView>
     );
