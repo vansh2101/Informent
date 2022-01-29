@@ -13,7 +13,7 @@ function Success({route, navigation}) {
             setPlay(false)
         }, 3500)
 
-        fetch('http://59a5-2405-201-4004-a0a6-303b-6704-57a1-bffa.ngrok.io/sendsms', {
+        fetch('https://informent.herokuapp.com/sendsms', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({msg:sms, phone: '+91'+user.phone})
