@@ -25,6 +25,7 @@ function AddArticle({route, navigation}) {
     const [steps, setSteps] = useState([null])
     const [details, setDetails] = useState([])
     const [video, setVideo] = useState('')
+    const [img, setImg] = useState('')
     const [loading, setLoading] = useState(false)
 
     const step_details = (val, pos) => {
@@ -47,6 +48,14 @@ function AddArticle({route, navigation}) {
       const arr = details.filter(item => item !== undefined)
 
       await upload(video).then(() => console.log('video uploaded'))
+      await upload(img, true).then(() => console.log('thumbnail uploaded'))
+
+      try{
+      var url = await firebase.storage().ref().child('images/'+title).getDownloadURL()
+      }
+      catch{
+        console.log('error')
+      }
 
       db.collection('articles').doc().set({
         author: user.name,
@@ -54,7 +63,8 @@ function AddArticle({route, navigation}) {
         name: title,
         description: description,
         steps: arr,
-        video: video === '' ? false: true
+        video: video === '' ? false: true,
+        img: url,
       })
 
       navigation.goBack()
@@ -71,12 +81,26 @@ function AddArticle({route, navigation}) {
       }
     }
 
-    const upload = async (uri) => {
+    const pickImage = async () => {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images
+      });
+  
+      if (!result.cancelled) {
+        setImg(result.uri);
+      }
+    }
+
+    const upload = async (uri, img=false) => {
       if (uri !== undefined){
         const response = await fetch(uri)
         const blob = await response.blob()
 
-        var ref = firebase.storage().ref().child('articles/'+title)
+        let path;
+        if (img) path = 'images/'+title
+        else path = 'articles/'+title
+
+        var ref = firebase.storage().ref().child(path)
         return ref.put(blob)
       }
     }
@@ -101,7 +125,9 @@ function AddArticle({route, navigation}) {
 
           <InputBox label='DESCRIPTION' placeholder='Summary of the article...' onChangeText={setDescription} multiline={true} style={{height: hp('13%')}} />
 
-          <InputBox label='VIDEO' placeholder='Click to add a demo video' editable={false} onPress={() => pickVideo()} value={video} />
+          <InputBox label='THUMBNAIL' placeholder='Click to add a thumbnail image' editable={false} onPress={pickImage} value={video} />
+
+          <InputBox label='VIDEO' placeholder='Click to add a demo video' editable={false} onPress={pickVideo} value={video} />
 
           {steps.map((item, key) => 
             <InputBox label={'STEP' + String(key+1)} placeholder='Step Details...' onChangeText={val => step_details(val,key)} multiline={true} style={{height: hp('18%')}} key={key} />
@@ -111,7 +137,7 @@ function AddArticle({route, navigation}) {
             <Text style={styles.btn}>Add Step +</Text>
           </TouchableOpacity>
 
-          <Btn text='Add Article' style={{marginTop: hp('5%')}} onPress={submit} />
+          <Btn text='Add Article' style={{marginTop: hp('4%'), marginBottom: hp('3%')}} onPress={submit} />
 
       </ScrollView>
     );

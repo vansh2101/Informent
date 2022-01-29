@@ -6,7 +6,7 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 function ArticleCard({item, onPress}) {
   return(
       <TouchableOpacity style={styles.container} onPress={onPress}>
-          <Image source={require('../assets/images/compost.jpg')} style={styles.img} />
+          <Image source={{uri: item.img}} style={styles.img} />
 
           <View style={{paddingVertical: 5, paddingHorizontal: 8}}>
             <Text style={styles.heading}>{item.name}</Text>
@@ -31,7 +31,8 @@ const styles = StyleSheet.create({
 
     img: {
         borderRadius: 10,
-        width: wp('90%')
+        width: wp('90%'),
+        height: hp('23%')
     },
 
     heading: {

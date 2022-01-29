@@ -69,7 +69,7 @@ function ItemDetails({route, navigation}) {
             <View style={styles.top}>
                 <Ionicons name="chevron-back-circle" size={hp('7%')} color="#94c037" style={styles.backBtn} onPress={() => navigation.goBack()} />
             </View>
-            <Image source={require('../assets/images/plant.png')} style={styles.img} />
+            <Image source={{uri: item.img}} style={styles.img} />
 
             <View style={{width: wp('90%'), alignSelf: 'center'}}>
                 <Text style={styles.h1}>{item.name}</Text>

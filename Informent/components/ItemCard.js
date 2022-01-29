@@ -5,10 +5,10 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-nativ
 //components
 import Credit from './Credit';
 
-function ItemCard({name, price, onPress}) {
+function ItemCard({name, price, onPress, img}) {
   return(
       <TouchableOpacity style={styles.container} onPress={onPress}>
-          <Image source={require('../assets/images/plant.png')} style={styles.img} />
+          <Image source={{uri: img}} style={styles.img} />
           <Text style={styles.heading}>{name}</Text>
           <Credit value={price} />
       </TouchableOpacity>

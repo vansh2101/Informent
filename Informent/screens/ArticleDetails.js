@@ -28,6 +28,7 @@ function ArticleDetails({route, navigation}) {
             if(article.video){
                 const url = await firebase.storage().ref().child('articles/'+article.name).getDownloadURL()
 
+                console.log(url)
                 setMedia(url)
             }
           }

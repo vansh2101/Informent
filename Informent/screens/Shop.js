@@ -78,7 +78,7 @@ function Shop({navigation}) {
 
           <View style={styles.main}>
             {show.map((item, key) => 
-              <ItemCard key={key} name={item.name} price={item.price} onPress={() => navigation.navigate('item', {item: item, user: user})} />
+              <ItemCard key={key} name={item.name} price={item.price} img={item.img} onPress={() => navigation.navigate('item', {item: item, user: user})} />
             )}
           </View>
       </ScrollView>
